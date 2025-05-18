@@ -44,8 +44,10 @@ static eUnplugAction __declspec( noinline ) showInitialDialog()
 {
 	ConfigDialog dlg{ eUnplugAction::Unspecified };
 	const INT_PTR res = dlg.DoModal( nullptr );
-	__debugbreak();
-	return eUnplugAction::Unspecified;
+	if( res != IDOK )
+		return eUnplugAction::Unspecified;
+
+	return dlg.unplugAction();
 }
 
 int __stdcall wWinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow )
@@ -62,7 +64,7 @@ int __stdcall wWinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 			return -2;
 	}
 
-	TrayAppWindow wnd;
+	TrayAppWindow wnd{ act };
 	wnd.Create( nullptr, CWindow::rcDefault, L"Sleep on Unplug", WS_OVERLAPPEDWINDOW );
 	if( !wnd )
 		return -3;

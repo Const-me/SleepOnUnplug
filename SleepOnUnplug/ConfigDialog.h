@@ -6,6 +6,8 @@ class ConfigDialog: public CDialogImpl<ConfigDialog>
 {
 	eUnplugAction action;
 public:
+	eUnplugAction unplugAction() const noexcept { return action; }
+
 	ConfigDialog( eUnplugAction act );
 
 	static constexpr UINT IDD = IDD_CONFIG;

@@ -1,14 +1,16 @@
 #pragma once
+#include "eUnplugAction.h"
 
 class TrayAppWindow: public CWindowImpl<TrayAppWindow>
 {
+	eUnplugAction action;
 	NOTIFYICONDATA nid = {};
 
 	static constexpr UINT WM_TRAYICON = WM_USER + 1;
 	static constexpr UINT ID_TRAY_EXIT = 1001;
 
 public:
-	TrayAppWindow();
+	TrayAppWindow( eUnplugAction act );
 
 	BEGIN_MSG_MAP( TrayAppWindow )
 		MESSAGE_HANDLER( WM_CREATE, OnCreate )

@@ -2,7 +2,8 @@
 #include "TrayAppWindow.h"
 #include "Resource.h"
 
-TrayAppWindow::TrayAppWindow()
+TrayAppWindow::TrayAppWindow( eUnplugAction act ):
+	action( act )
 {
 	constexpr size_t cb = sizeof( NOTIFYICONDATA );
 	static_assert( 0 == ( cb % 8 ) && 8 == alignof( NOTIFYICONDATA ) );
@@ -31,7 +32,7 @@ LRESULT TrayAppWindow::OnCreate( UINT, WPARAM, LPARAM, BOOL& )
 
 LRESULT TrayAppWindow::OnTrayIcon( UINT, WPARAM, LPARAM lParam, BOOL& )
 {
-	if( LOWORD( lParam ) == WM_RBUTTONUP ) 
+	if( LOWORD( lParam ) == WM_RBUTTONUP )
 	{
 		POINT pt;
 		GetCursorPos( &pt );
