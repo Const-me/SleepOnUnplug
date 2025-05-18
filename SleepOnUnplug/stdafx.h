@@ -20,3 +20,5 @@
 inline HRESULT getLastHr() { return HRESULT_FROM_WIN32( ::GetLastError() ); }
 
 HRESULT formatErrorMessage( std::wstring& result, const char* what, HRESULT status ) noexcept;
+
+extern const LPCTSTR messageTitle;

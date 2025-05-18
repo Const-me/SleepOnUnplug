@@ -6,11 +6,6 @@
 #include "Registry.h"
 #pragma comment(lib, "PowrProf.lib")
 
-namespace
-{
-	static const LPCTSTR messageTitle = L"Sleep on Unplug";
-}
-
 HRESULT PowerSettingsNotification::registerWindow( HWND wnd ) noexcept
 {
 	if( nullptr != hpn )

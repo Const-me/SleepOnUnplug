@@ -33,3 +33,5 @@ HRESULT formatErrorMessage( std::wstring& result, const char* what, HRESULT stat
 		return E_OUTOFMEMORY;
 	}
 }
+
+const LPCTSTR messageTitle = L"Sleep on Unplug";

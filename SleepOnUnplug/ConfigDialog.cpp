@@ -39,6 +39,15 @@ LRESULT ConfigDialog::OnBnClickedCancel( WORD /*wNotifyCode*/, WORD /*wID*/, HWN
 	return 0;
 }
 
+static inline bool isHibernationEnabled()
+{
+	DWORD dwResult = 0, dwSize = 4;
+	LONG ret = RegGetValue( HKEY_LOCAL_MACHINE,
+		LR"(SYSTEM\CurrentControlSet\Control\Power)", L"HibernateEnabled",
+		RRF_RT_REG_DWORD, nullptr, &dwResult, &dwSize );
+	return ( ret == ERROR_SUCCESS && dwResult != 0 );
+}
+
 LRESULT ConfigDialog::OnBnClickedOk( WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/ )
 {
 	CWindow combo = GetDlgItem( IDC_ACTION );
@@ -52,6 +61,11 @@ LRESULT ConfigDialog::OnBnClickedOk( WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*
 		action = eUnplugAction::Sleep;
 		break;
 	case 2:
+		if( !isHibernationEnabled() )
+		{
+			MessageBox( L"Hibernation is disabled in the OS preferences", messageTitle, MB_OK | MB_ICONWARNING );
+			return 0;
+		}
 		action = eUnplugAction::Hibernate;
 		break;
 	default:
