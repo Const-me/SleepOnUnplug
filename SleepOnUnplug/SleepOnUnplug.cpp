@@ -1,5 +1,7 @@
 #include <stdafx.h>
 #include "TrayAppWindow.h"
+#include "Registry.h"
+#include "ConfigDialog.h"
 
 CComModule _AtlModule;
 
@@ -22,7 +24,7 @@ public:
 		}
 		mutex.Attach( h );
 
-		if( GetLastError() == ERROR_ALREADY_EXISTS ) 
+		if( GetLastError() == ERROR_ALREADY_EXISTS )
 		{
 			MessageBox( nullptr, L"Another instance of the application is already running.", L"Sleep on Unplug", MB_ICONINFORMATION | MB_OK );
 			mutex.Close();
@@ -38,20 +40,36 @@ public:
 	}
 };
 
+static eUnplugAction __declspec( noinline ) showInitialDialog()
+{
+	ConfigDialog dlg{ eUnplugAction::Unspecified };
+	const INT_PTR res = dlg.DoModal( nullptr );
+	__debugbreak();
+	return eUnplugAction::Unspecified;
+}
+
 int __stdcall wWinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow )
 {
 	SingleInstanceCheck sic;
 	if( !sic.initialize() )
 		return -1;
 
+	eUnplugAction act = actionLoad();
+	if( act == eUnplugAction::Unspecified )
+	{
+		act = showInitialDialog();
+		if( act == eUnplugAction::Unspecified )
+			return -2;
+	}
+
 	TrayAppWindow wnd;
 	wnd.Create( nullptr, CWindow::rcDefault, L"Sleep on Unplug", WS_OVERLAPPEDWINDOW );
 	if( !wnd )
-		return -2;
+		return -3;
 	::ShowWindow( wnd.m_hWnd, SW_HIDE );
 
 	MSG msg;
-	while( GetMessage( &msg, nullptr, 0, 0 ) ) 
+	while( GetMessage( &msg, nullptr, 0, 0 ) )
 	{
 		TranslateMessage( &msg );
 		DispatchMessage( &msg );

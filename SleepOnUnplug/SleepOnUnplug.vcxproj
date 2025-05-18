@@ -82,6 +82,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ConfigDialog.h" />
+    <ClInclude Include="eUnplugAction.h" />
+    <ClInclude Include="Registry.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SleepOnUnplug.h" />
     <ClInclude Include="stdafx.h" />
@@ -89,6 +92,8 @@
     <ClInclude Include="TrayAppWindow.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ConfigDialog.cpp" />
+    <ClCompile Include="Registry.cpp" />
     <ClCompile Include="SleepOnUnplug.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
