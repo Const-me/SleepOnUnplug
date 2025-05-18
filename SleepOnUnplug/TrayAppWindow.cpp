@@ -1,6 +1,8 @@
 #include <stdafx.h>
+#include <powrprof.h>
 #include "TrayAppWindow.h"
 #include "Resource.h"
+#pragma comment(lib, "PowrProf.lib")
 
 namespace
 {
@@ -117,17 +119,29 @@ LRESULT TrayAppWindow::onPowerBroadcast( UINT, WPARAM wParam, LPARAM, BOOL& hand
 		return 0;
 
 	handled = TRUE;
+	BOOL hibernate;
 	switch( action )
 	{
 	case eUnplugAction::Message:
 		MessageBox( L"Power unplug detected", messageTitle, MB_ICONINFORMATION | MB_OK );
 		return TRUE;
 	case eUnplugAction::Sleep:
-		MessageBox( L"TODO: sleep", messageTitle, MB_ICONINFORMATION | MB_OK );
-		return TRUE;
+		hibernate = FALSE;
+		break;
 	case eUnplugAction::Hibernate:
-		MessageBox( L"TODO: hibernate", messageTitle, MB_ICONINFORMATION | MB_OK );
-		return TRUE;
+		hibernate = TRUE;
+		break;
+	default:
+		handled = FALSE;
+		return FALSE;
 	}
+
+	constexpr BOOL bWakeupEventsDisabled = TRUE;
+	const BOOL res = SetSuspendState( hibernate, TRUE, bWakeupEventsDisabled );
+	if( res == TRUE )
+		return TRUE;
+
+	// TODO: include the reason why i.e. FormatMessage
+	MessageBox( L"SetSuspendState() failed.", messageTitle, MB_ICONWARNING | MB_OK );
 	return TRUE;
 }
