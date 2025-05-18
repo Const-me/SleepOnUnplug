@@ -12,7 +12,7 @@ LRESULT ConfigDialog::OnInitDialog( UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*l
 	CWindow combo = GetDlgItem( IDC_ACTION );
 	combo.SendMessageW( CB_ADDSTRING, 0, (LPARAM)L"Show message" );
 	combo.SendMessageW( CB_ADDSTRING, 0, (LPARAM)L"Sleep" );
-	combo.SendMessageW( CB_ADDSTRING, 0, (LPARAM)L"Hybernate" );
+	combo.SendMessageW( CB_ADDSTRING, 0, (LPARAM)L"Hibernate" );
 
 	int curSel = 1;	// Default to Sleep
 	switch( action )

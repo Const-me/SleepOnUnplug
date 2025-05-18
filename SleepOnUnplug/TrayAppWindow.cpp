@@ -47,8 +47,9 @@ LRESULT TrayAppWindow::onCreate( UINT, WPARAM, LPARAM, BOOL& )
 	HRESULT hr = psn.registerWindow( m_hWnd );
 	if( FAILED( hr ) )
 	{
-		// TODO: FormatMessage
-		MessageBox( L"Failed to register for power source notifications.", messageTitle, MB_ICONWARNING | MB_OK );
+		std::wstring message;
+		formatErrorMessage( message, "Failed to register for power source notifications.", hr );
+		MessageBox( message.c_str(), messageTitle, MB_ICONWARNING | MB_OK );
 		return -1;
 	}
 
@@ -110,8 +111,9 @@ LRESULT TrayAppWindow::onPowerBroadcast( UINT, WPARAM wParam, LPARAM, BOOL& hand
 	SYSTEM_POWER_STATUS sps;
 	if( !GetSystemPowerStatus( &sps ) )
 	{
-		// TODO: include the reason why i.e. FormatMessage
-		MessageBox( L"GetSystemPowerStatus() failed.", messageTitle, MB_ICONWARNING | MB_OK );
+		std::wstring message;
+		formatErrorMessage( message, "GetSystemPowerStatus() failed", getLastHr() );
+		MessageBox( message.c_str(), messageTitle, MB_ICONWARNING | MB_OK );
 		return 0;
 	}
 
@@ -141,7 +143,8 @@ LRESULT TrayAppWindow::onPowerBroadcast( UINT, WPARAM wParam, LPARAM, BOOL& hand
 	if( res == TRUE )
 		return TRUE;
 
-	// TODO: include the reason why i.e. FormatMessage
-	MessageBox( L"SetSuspendState() failed.", messageTitle, MB_ICONWARNING | MB_OK );
+	std::wstring message;
+	formatErrorMessage( message, "SetSuspendState() failed", getLastHr() );
+	MessageBox( message.c_str(), messageTitle, MB_ICONWARNING | MB_OK );
 	return TRUE;
 }
