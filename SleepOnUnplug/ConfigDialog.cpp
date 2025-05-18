@@ -9,6 +9,8 @@ ConfigDialog::ConfigDialog( eUnplugAction act ):
 
 LRESULT ConfigDialog::OnInitDialog( UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/ )
 {
+	CenterWindow();
+
 	CWindow combo = GetDlgItem( IDC_ACTION );
 	combo.SendMessageW( CB_ADDSTRING, 0, (LPARAM)L"Show message" );
 	combo.SendMessageW( CB_ADDSTRING, 0, (LPARAM)L"Sleep" );
