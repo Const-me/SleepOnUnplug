@@ -94,7 +94,6 @@
     <ClInclude Include="eUnplugAction.h" />
     <ClInclude Include="Registry.h" />
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="SleepOnUnplug.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TrayAppWindow.h" />
