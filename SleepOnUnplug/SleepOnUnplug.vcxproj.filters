@@ -24,4 +24,7 @@
   <ItemGroup>
     <ResourceCompile Include="SleepOnUnplug.rc" />
   </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="app.manifest" />
+  </ItemGroup>
 </Project>
