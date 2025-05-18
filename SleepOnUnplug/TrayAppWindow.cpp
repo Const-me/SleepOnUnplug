@@ -11,6 +11,7 @@ TrayAppWindow::TrayAppWindow()
 
 LRESULT TrayAppWindow::OnCreate( UINT, WPARAM, LPARAM, BOOL& )
 {
+	// Add the tray icon
 	nid.cbSize = sizeof( nid );
 	nid.hWnd = m_hWnd;
 	nid.uID = 1;
@@ -21,9 +22,10 @@ LRESULT TrayAppWindow::OnCreate( UINT, WPARAM, LPARAM, BOOL& )
 
 	if( !Shell_NotifyIcon( NIM_ADD, &nid ) )
 	{
-		// TODO: report error
+		MessageBox( L"Failed to add the tray icon.", L"Error", MB_ICONWARNING | MB_OK );
 		return -1;
 	}
+
 	return 0;
 }
 
