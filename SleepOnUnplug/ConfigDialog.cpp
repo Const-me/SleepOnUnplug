@@ -23,7 +23,7 @@ LRESULT ConfigDialog::OnInitDialog( UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*l
 	case eUnplugAction::Message:
 		curSel = 0;
 		break;
-	case eUnplugAction::Hybernate:
+	case eUnplugAction::Hibernate:
 		curSel = 2;
 		break;
 	}
@@ -50,7 +50,7 @@ LRESULT ConfigDialog::OnBnClickedOk( WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*
 		action = eUnplugAction::Sleep;
 		break;
 	case 2:
-		action = eUnplugAction::Hybernate;
+		action = eUnplugAction::Hibernate;
 		break;
 	default:
 		EndDialog( IDCANCEL );

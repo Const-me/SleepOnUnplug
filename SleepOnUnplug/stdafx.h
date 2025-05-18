@@ -14,3 +14,5 @@
 // ATL header files
 #include <atlbase.h>
 #include <atlwin.h>
+
+inline HRESULT getLastHr() { return HRESULT_FROM_WIN32( ::GetLastError() ); }

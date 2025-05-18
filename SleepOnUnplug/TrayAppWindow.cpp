@@ -2,6 +2,35 @@
 #include "TrayAppWindow.h"
 #include "Resource.h"
 
+namespace
+{
+	static const LPCTSTR messageTitle = L"Sleep on Unplug";
+}
+
+HRESULT PowerSettingsNotification::registerWindow( HWND wnd ) noexcept
+{
+	if( nullptr != hpn )
+		return HRESULT_FROM_WIN32( ERROR_ALREADY_INITIALIZED );
+	hpn = ::RegisterPowerSettingNotification( wnd, &GUID_ACDC_POWER_SOURCE, DEVICE_NOTIFY_WINDOW_HANDLE );
+	if( nullptr == hpn )
+		return getLastHr();
+	return S_OK;
+}
+
+HRESULT PowerSettingsNotification::unregister() noexcept
+{
+	if( nullptr == hpn )
+		return S_OK;
+	const BOOL success = UnregisterPowerSettingNotification( hpn );
+	hpn = nullptr;
+	return success ? S_OK : getLastHr();
+}
+
+PowerSettingsNotification::~PowerSettingsNotification() noexcept
+{
+	unregister();
+}
+
 TrayAppWindow::TrayAppWindow( eUnplugAction act ):
 	action( act )
 {
@@ -10,8 +39,17 @@ TrayAppWindow::TrayAppWindow( eUnplugAction act ):
 	__stosq( (DWORD64*)&nid, 0, cb / 8 );
 }
 
-LRESULT TrayAppWindow::OnCreate( UINT, WPARAM, LPARAM, BOOL& )
+LRESULT TrayAppWindow::onCreate( UINT, WPARAM, LPARAM, BOOL& )
 {
+	// Register for power source notifications
+	HRESULT hr = psn.registerWindow( m_hWnd );
+	if( FAILED( hr ) )
+	{
+		// TODO: FormatMessage
+		MessageBox( L"Failed to register for power source notifications.", messageTitle, MB_ICONWARNING | MB_OK );
+		return -1;
+	}
+
 	// Add the tray icon
 	nid.cbSize = sizeof( nid );
 	nid.hWnd = m_hWnd;
@@ -19,18 +57,19 @@ LRESULT TrayAppWindow::OnCreate( UINT, WPARAM, LPARAM, BOOL& )
 	nid.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP;
 	nid.uCallbackMessage = WM_TRAYICON;
 	nid.hIcon = LoadIcon( _AtlBaseModule.GetModuleInstance(), MAKEINTRESOURCE( IDI_SLEEPONUNPLUG ) );
-	wcscpy_s( nid.szTip, L"Sleep on Unplug" );
+	wcscpy_s( nid.szTip, messageTitle );
 
 	if( !Shell_NotifyIcon( NIM_ADD, &nid ) )
 	{
-		MessageBox( L"Failed to add the tray icon.", L"Error", MB_ICONWARNING | MB_OK );
+		psn.unregister();
+		MessageBox( L"Failed to add the tray icon.", messageTitle, MB_ICONWARNING | MB_OK );
 		return -1;
 	}
 
 	return 0;
 }
 
-LRESULT TrayAppWindow::OnTrayIcon( UINT, WPARAM, LPARAM lParam, BOOL& )
+LRESULT TrayAppWindow::onTrayIcon( UINT, WPARAM, LPARAM lParam, BOOL& )
 {
 	if( LOWORD( lParam ) == WM_RBUTTONUP )
 	{
@@ -45,16 +84,50 @@ LRESULT TrayAppWindow::OnTrayIcon( UINT, WPARAM, LPARAM lParam, BOOL& )
 	return 0;
 }
 
-LRESULT TrayAppWindow::OnExit( WORD, WORD, HWND, BOOL& )
+LRESULT TrayAppWindow::onExit( WORD, WORD, HWND, BOOL& )
 {
+	psn.unregister();
 	Shell_NotifyIcon( NIM_DELETE, &nid );
 	DestroyWindow();
 	return 0;
 }
 
-LRESULT TrayAppWindow::OnDestroy( UINT, WPARAM, LPARAM, BOOL& )
+LRESULT TrayAppWindow::onDestroy( UINT, WPARAM, LPARAM, BOOL& )
 {
 	Shell_NotifyIcon( NIM_DELETE, &nid );
 	PostQuitMessage( 0 );
 	return 0;
+}
+
+LRESULT TrayAppWindow::onPowerBroadcast( UINT, WPARAM wParam, LPARAM, BOOL& handled )
+{
+	handled = false;
+	if( wParam != PBT_APMPOWERSTATUSCHANGE )
+		return 0;
+
+	SYSTEM_POWER_STATUS sps;
+	if( !GetSystemPowerStatus( &sps ) )
+	{
+		// TODO: include the reason why i.e. FormatMessage
+		MessageBox( L"GetSystemPowerStatus() failed.", messageTitle, MB_ICONWARNING | MB_OK );
+		return 0;
+	}
+
+	if( sps.ACLineStatus != 0 )
+		return 0;
+
+	handled = TRUE;
+	switch( action )
+	{
+	case eUnplugAction::Message:
+		MessageBox( L"Power unplug detected", messageTitle, MB_ICONINFORMATION | MB_OK );
+		return TRUE;
+	case eUnplugAction::Sleep:
+		MessageBox( L"TODO: sleep", messageTitle, MB_ICONINFORMATION | MB_OK );
+		return TRUE;
+	case eUnplugAction::Hibernate:
+		MessageBox( L"TODO: hibernate", messageTitle, MB_ICONINFORMATION | MB_OK );
+		return TRUE;
+	}
+	return TRUE;
 }

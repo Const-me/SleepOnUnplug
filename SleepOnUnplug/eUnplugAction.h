@@ -5,5 +5,5 @@ enum struct eUnplugAction: uint8_t
 	Unspecified = 0,
 	Message = 1,
 	Sleep = 2,
-	Hybernate = 3,
+	Hibernate = 3,
 };
