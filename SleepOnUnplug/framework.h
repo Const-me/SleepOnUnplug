@@ -4,6 +4,9 @@
 #define NOMINMAX
 // Windows Header Files
 #include <windows.h>
+// ATL header files
+#include <atlbase.h>
+#include <atlwin.h>
 
 // C RunTime Header Files
 #include <stdlib.h>

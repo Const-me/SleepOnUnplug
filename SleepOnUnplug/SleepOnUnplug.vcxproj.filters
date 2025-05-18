@@ -5,6 +5,8 @@
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SleepOnUnplug.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="TrayAppWindow.h" />
+    <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="SleepOnUnplug.ico" />
@@ -12,6 +14,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SleepOnUnplug.cpp" />
+    <ClCompile Include="TrayAppWindow.cpp" />
+    <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SleepOnUnplug.rc" />
