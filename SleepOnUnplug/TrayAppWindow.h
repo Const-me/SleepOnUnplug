@@ -8,6 +8,8 @@ class TrayAppWindow: public CWindowImpl<TrayAppWindow>
 	static constexpr UINT ID_TRAY_EXIT = 1001;
 
 public:
+	TrayAppWindow();
+
 	BEGIN_MSG_MAP( TrayAppWindow )
 		MESSAGE_HANDLER( WM_CREATE, OnCreate )
 		MESSAGE_HANDLER( WM_TRAYICON, OnTrayIcon )

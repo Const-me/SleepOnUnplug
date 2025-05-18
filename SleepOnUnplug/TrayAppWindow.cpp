@@ -2,6 +2,13 @@
 #include "TrayAppWindow.h"
 #include "Resource.h"
 
+TrayAppWindow::TrayAppWindow()
+{
+	constexpr size_t cb = sizeof( NOTIFYICONDATA );
+	static_assert( 0 == ( cb % 8 ) && 8 == alignof( NOTIFYICONDATA ) );
+	__stosq( (DWORD64*)&nid, 0, cb / 8 );
+}
+
 LRESULT TrayAppWindow::OnCreate( UINT, WPARAM, LPARAM, BOOL& )
 {
 	nid.cbSize = sizeof( nid );
