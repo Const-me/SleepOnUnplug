@@ -2,6 +2,8 @@
 #include <powrprof.h>
 #include "TrayAppWindow.h"
 #include "Resource.h"
+#include "ConfigDialog.h"
+#include "Registry.h"
 #pragma comment(lib, "PowrProf.lib")
 
 namespace
@@ -79,11 +81,32 @@ LRESULT TrayAppWindow::onTrayIcon( UINT, WPARAM, LPARAM lParam, BOOL& )
 		POINT pt;
 		GetCursorPos( &pt );
 		HMENU hMenu = CreatePopupMenu();
+		AppendMenu( hMenu, MF_STRING, ID_TRAY_CONFIG, L"Configuration" );
 		AppendMenu( hMenu, MF_STRING, ID_TRAY_EXIT, L"Exit" );
 		SetForegroundWindow( m_hWnd );
 		TrackPopupMenu( hMenu, TPM_RIGHTBUTTON, pt.x, pt.y, 0, m_hWnd, nullptr );
 		DestroyMenu( hMenu );
 	}
+	return 0;
+}
+
+LRESULT TrayAppWindow::onConfig( WORD, WORD, HWND, BOOL& )
+{
+	ConfigDialog dlg{ action };
+	const INT_PTR res = dlg.DoModal( nullptr );
+	if( res != IDOK )
+		return 0;	// User canceled
+
+	const eUnplugAction action = dlg.unplugAction();
+	HRESULT hr = actionStore( action );
+	if( SUCCEEDED( hr ) )
+	{
+		this->action = action;
+		return 0;
+	}
+	std::wstring message;
+	formatErrorMessage( message, "Unable to save the configuration", hr );
+	MessageBox( message.c_str(), messageTitle, MB_ICONWARNING | MB_OK );
 	return 0;
 }
 
