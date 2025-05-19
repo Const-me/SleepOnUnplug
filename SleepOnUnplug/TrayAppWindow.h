@@ -1,6 +1,7 @@
 #pragma once
 #include "eUnplugAction.h"
 
+// RAII class to subscribe a window for WM_POWERBROADCAST notifications from the OS
 class PowerSettingsNotification
 {
 	HPOWERNOTIFY hpn = nullptr;
@@ -11,6 +12,7 @@ public:
 	~PowerSettingsNotification() noexcept;
 };
 
+// Main window of the application; it's invisible i.e. message-only
 class TrayAppWindow: public CWindowImpl<TrayAppWindow>
 {
 	eUnplugAction action;
