@@ -62,7 +62,9 @@ LRESULT TrayAppWindow::onCreate( UINT, WPARAM, LPARAM, BOOL& )
 	nid.uID = 1;
 	nid.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP;
 	nid.uCallbackMessage = WM_TRAYICON;
-	nid.hIcon = LoadIcon( _AtlBaseModule.GetModuleInstance(), MAKEINTRESOURCE( IDI_SLEEPONUNPLUG ) );
+	const HICON icon = LoadIcon( _AtlBaseModule.GetModuleInstance(), MAKEINTRESOURCE( IDI_SLEEPONUNPLUG ) );
+	this->icon = icon;
+	nid.hIcon = icon;
 	wcscpy_s( nid.szTip, messageTitle );
 
 	if( !Shell_NotifyIcon( NIM_ADD, &nid ) )
@@ -93,7 +95,7 @@ LRESULT TrayAppWindow::onTrayIcon( UINT, WPARAM, LPARAM lParam, BOOL& )
 
 LRESULT TrayAppWindow::onConfig( WORD, WORD, HWND, BOOL& )
 {
-	ConfigDialog dlg{ action };
+	ConfigDialog dlg{ action, icon };
 	const INT_PTR res = dlg.DoModal( nullptr );
 	if( res != IDOK )
 		return 0;	// User canceled

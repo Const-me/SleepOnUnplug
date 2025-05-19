@@ -42,7 +42,8 @@ public:
 
 static eUnplugAction __declspec( noinline ) showInitialDialog()
 {
-	ConfigDialog dlg{ eUnplugAction::Unspecified };
+	const HICON icon = LoadIcon( _AtlBaseModule.GetModuleInstance(), MAKEINTRESOURCE( IDI_SLEEPONUNPLUG ) );
+	ConfigDialog dlg{ eUnplugAction::Unspecified, icon };
 	const INT_PTR res = dlg.DoModal( nullptr );
 	if( res != IDOK )
 		return eUnplugAction::Unspecified;

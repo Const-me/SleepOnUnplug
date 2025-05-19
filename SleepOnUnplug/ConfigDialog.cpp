@@ -2,13 +2,14 @@
 #include "ConfigDialog.h"
 #include "Registry.h"
 
-ConfigDialog::ConfigDialog( eUnplugAction act ):
-	action( act ) 
+ConfigDialog::ConfigDialog( eUnplugAction act, HICON hIcon ) :
+	action( act ), icon( hIcon )
 {
 }
 
 LRESULT ConfigDialog::OnInitDialog( UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/ )
 {
+	SendMessage( m_hWnd, WM_SETICON, ICON_SMALL, (LPARAM)icon );
 	CenterWindow();
 
 	CWindow combo = GetDlgItem( IDC_ACTION );

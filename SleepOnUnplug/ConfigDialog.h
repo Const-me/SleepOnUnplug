@@ -5,10 +5,11 @@
 class ConfigDialog: public CDialogImpl<ConfigDialog>
 {
 	eUnplugAction action;
+	const HICON icon;
 public:
 	eUnplugAction unplugAction() const noexcept { return action; }
 
-	ConfigDialog( eUnplugAction act );
+	ConfigDialog( eUnplugAction act, HICON hIcon );
 
 	static constexpr UINT IDD = IDD_CONFIG;
 

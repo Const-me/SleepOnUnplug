@@ -19,6 +19,7 @@ class TrayAppWindow: public CWindowImpl<TrayAppWindow, CWindow, TrayAppWindowTra
 {
 	eUnplugAction action;
 	PowerSettingsNotification psn;
+	HICON icon = nullptr;
 	NOTIFYICONDATA nid;
 
 	static constexpr UINT WM_TRAYICON = WM_USER + 1;
