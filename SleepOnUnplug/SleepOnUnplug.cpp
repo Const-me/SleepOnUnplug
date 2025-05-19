@@ -65,10 +65,8 @@ int __stdcall wWinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 	}
 
 	TrayAppWindow wnd{ act };
-	wnd.Create( nullptr, CWindow::rcDefault, L"Sleep on Unplug", WS_OVERLAPPEDWINDOW );
-	if( !wnd )
+	if( !wnd.create() )
 		return -3;
-	::ShowWindow( wnd.m_hWnd, SW_HIDE );
 
 	MSG msg;
 	while( GetMessage( &msg, nullptr, 0, 0 ) )

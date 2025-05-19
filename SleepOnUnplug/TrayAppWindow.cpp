@@ -38,6 +38,12 @@ TrayAppWindow::TrayAppWindow( eUnplugAction act ):
 	__stosq( (DWORD64*)&nid, 0, cb / 8 );
 }
 
+bool TrayAppWindow::create() noexcept
+{
+	const HWND wnd = Create( nullptr, 0, messageTitle );
+	return nullptr != wnd;
+}
+
 LRESULT TrayAppWindow::onCreate( UINT, WPARAM, LPARAM, BOOL& )
 {
 	// Register for power source notifications

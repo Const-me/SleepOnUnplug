@@ -12,8 +12,10 @@ public:
 	~PowerSettingsNotification() noexcept;
 };
 
+using TrayAppWindowTraits = CWinTraits<0, 0>;
+
 // Main window of the application; it's invisible i.e. message-only
-class TrayAppWindow: public CWindowImpl<TrayAppWindow>
+class TrayAppWindow: public CWindowImpl<TrayAppWindow, CWindow, TrayAppWindowTraits>
 {
 	eUnplugAction action;
 	PowerSettingsNotification psn;
@@ -26,6 +28,8 @@ class TrayAppWindow: public CWindowImpl<TrayAppWindow>
 public:
 	TrayAppWindow( eUnplugAction act );
 
+	bool create() noexcept;
+
 	BEGIN_MSG_MAP( TrayAppWindow )
 		MESSAGE_HANDLER( WM_CREATE, onCreate )
 		MESSAGE_HANDLER( WM_TRAYICON, onTrayIcon )
@@ -35,7 +39,7 @@ public:
 		MESSAGE_HANDLER( WM_POWERBROADCAST, onPowerBroadcast );
 	END_MSG_MAP()
 
-	static LPCWSTR GetWndClassName() { return L"TrayAppWindow"; }
+	static LPCWSTR GetWndClassName() { return L"SleepOnUnplug"; }
 
 private:
 	LRESULT onCreate( UINT, WPARAM, LPARAM, BOOL& );
