@@ -95,8 +95,15 @@ LRESULT TrayAppWindow::onTrayIcon( UINT, WPARAM, LPARAM lParam, BOOL& )
 
 LRESULT TrayAppWindow::onConfig( WORD, WORD, HWND, BOOL& )
 {
-	ConfigDialog dlg{ action, icon };
+	if( nullptr != configDialog && ::IsWindow( configDialog ) )
+	{
+		SetForegroundWindow( configDialog );
+		return 0;
+	}
+
+	ConfigDialog dlg{ action, icon, &configDialog };
 	const INT_PTR res = dlg.DoModal( nullptr );
+	configDialog = nullptr;
 	if( res != IDOK )
 		return 0;	// User canceled
 

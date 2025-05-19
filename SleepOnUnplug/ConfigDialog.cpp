@@ -2,8 +2,8 @@
 #include "ConfigDialog.h"
 #include "Registry.h"
 
-ConfigDialog::ConfigDialog( eUnplugAction act, HICON hIcon ) :
-	action( act ), icon( hIcon )
+ConfigDialog::ConfigDialog( eUnplugAction act, HICON hIcon, HWND* pWindowHandle ) :
+	action( act ), icon( hIcon ), windowHandle( pWindowHandle )
 {
 }
 
@@ -31,6 +31,9 @@ LRESULT ConfigDialog::OnInitDialog( UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*l
 		break;
 	}
 	combo.SendMessageW( CB_SETCURSEL, curSel );
+
+	if( nullptr != windowHandle )
+		*windowHandle = m_hWnd;
 	return 1;
 }
 
