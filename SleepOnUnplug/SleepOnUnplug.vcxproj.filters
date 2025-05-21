@@ -10,7 +10,6 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="SleepOnUnplug.ico" />
-    <Image Include="small.ico" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SleepOnUnplug.cpp" />

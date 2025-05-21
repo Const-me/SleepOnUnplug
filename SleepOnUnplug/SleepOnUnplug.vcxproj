@@ -112,7 +112,6 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="SleepOnUnplug.ico" />
-    <Image Include="small.ico" />
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="app.manifest" />
