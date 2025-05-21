@@ -1,8 +1,7 @@
 #include "stdafx.h"
 #include "ConfigDialog.h"
-#include "Registry.h"
 
-ConfigDialog::ConfigDialog( eUnplugAction act, HICON hIcon, HWND* pWindowHandle ) :
+ConfigDialog::ConfigDialog( UnplugAction act, HICON hIcon, HWND* pWindowHandle ) :
 	action( act ), icon( hIcon ), windowHandle( pWindowHandle )
 {
 }
@@ -18,7 +17,7 @@ LRESULT ConfigDialog::OnInitDialog( UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*l
 	combo.SendMessageW( CB_ADDSTRING, 0, (LPARAM)L"Hibernate" );
 
 	int curSel = 1;	// Default to Sleep
-	switch( action )
+	switch( action.action() )
 	{
 	case eUnplugAction::Unspecified:
 	default:
@@ -31,6 +30,8 @@ LRESULT ConfigDialog::OnInitDialog( UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*l
 		break;
 	}
 	combo.SendMessageW( CB_SETCURSEL, curSel );
+
+	SendDlgItemMessageW( IDC_WAKE_EVENTS, BM_SETCHECK, action.wakeupEventsDisabled() ? BST_UNCHECKED : BST_CHECKED );
 
 	if( nullptr != windowHandle )
 		*windowHandle = m_hWnd;
@@ -54,15 +55,15 @@ static inline bool isHibernationEnabled()
 
 LRESULT ConfigDialog::OnBnClickedOk( WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/ )
 {
-	CWindow combo = GetDlgItem( IDC_ACTION );
-	const int curSel = (int)combo.SendMessageW( CB_GETCURSEL );
-	switch( curSel )
+	int curState = (int)SendDlgItemMessageW( IDC_ACTION, CB_GETCURSEL );
+	eUnplugAction act;
+	switch( curState )
 	{
 	case 0:
-		action = eUnplugAction::Message;
+		act = eUnplugAction::Message;
 		break;
 	case 1:
-		action = eUnplugAction::Sleep;
+		act = eUnplugAction::Sleep;
 		break;
 	case 2:
 		if( !isHibernationEnabled() )
@@ -70,20 +71,28 @@ LRESULT ConfigDialog::OnBnClickedOk( WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*
 			MessageBox( L"Hibernation is disabled in the OS preferences", messageTitle, MB_OK | MB_ICONWARNING );
 			return 0;
 		}
-		action = eUnplugAction::Hibernate;
+		act = eUnplugAction::Hibernate;
 		break;
 	default:
 		EndDialog( IDCANCEL );
 		return 0;
 	}
 
-	const HRESULT hr = actionStore( action );
+	curState = (int)SendDlgItemMessage( IDC_WAKE_EVENTS, BM_GETCHECK );
+	const bool enableWakeupEvents = ( curState == BST_CHECKED );
+	
+	UnplugAction action{ act, enableWakeupEvents };
+	const HRESULT hr = action.store();
 	if( SUCCEEDED( hr ) )
 	{
+		this->action = action;
 		EndDialog( IDOK );
 		return 0;
 	}
 
-	// TODO: report an error
+	// Report an error
+	std::wstring message;
+	formatErrorMessage( message, "Unable to save the preferences", hr );
+	MessageBox( message.c_str(), messageTitle, MB_ICONWARNING | MB_OK );
 	return 0;
 }

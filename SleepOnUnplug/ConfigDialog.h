@@ -1,16 +1,16 @@
 #pragma once
 #include "resource.h"
-#include "eUnplugAction.h"
+#include "UnplugAction.h"
 
 class ConfigDialog: public CDialogImpl<ConfigDialog>
 {
-	eUnplugAction action;
+	UnplugAction action;
 	const HICON icon;
 	HWND* const windowHandle;
 public:
-	eUnplugAction unplugAction() const noexcept { return action; }
+	UnplugAction unplugAction() const noexcept { return action; }
 
-	ConfigDialog( eUnplugAction act, HICON hIcon, HWND* pWindowHandle );
+	ConfigDialog( UnplugAction act, HICON hIcon, HWND* pWindowHandle );
 
 	static constexpr UINT IDD = IDD_CONFIG;
 

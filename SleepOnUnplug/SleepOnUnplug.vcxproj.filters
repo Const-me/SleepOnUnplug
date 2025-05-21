@@ -5,8 +5,7 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TrayAppWindow.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="eUnplugAction.h" />
-    <ClInclude Include="Registry.h" />
+    <ClInclude Include="UnplugAction.h" />
     <ClInclude Include="ConfigDialog.h" />
   </ItemGroup>
   <ItemGroup>
@@ -17,8 +16,8 @@
     <ClCompile Include="SleepOnUnplug.cpp" />
     <ClCompile Include="TrayAppWindow.cpp" />
     <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="Registry.cpp" />
     <ClCompile Include="ConfigDialog.cpp" />
+    <ClCompile Include="UnplugAction.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SleepOnUnplug.rc" />

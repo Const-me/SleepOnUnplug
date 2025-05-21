@@ -3,7 +3,6 @@
 #include "TrayAppWindow.h"
 #include "Resource.h"
 #include "ConfigDialog.h"
-#include "Registry.h"
 #pragma comment(lib, "PowrProf.lib")
 
 HRESULT PowerSettingsNotification::registerWindow( HWND wnd ) noexcept
@@ -30,7 +29,7 @@ PowerSettingsNotification::~PowerSettingsNotification() noexcept
 	unregister();
 }
 
-TrayAppWindow::TrayAppWindow( eUnplugAction act ):
+TrayAppWindow::TrayAppWindow( UnplugAction act ):
 	action( act )
 {
 	constexpr size_t cb = sizeof( NOTIFYICONDATA );
@@ -107,16 +106,8 @@ LRESULT TrayAppWindow::onConfig( WORD, WORD, HWND, BOOL& )
 	if( res != IDOK )
 		return 0;	// User canceled
 
-	const eUnplugAction action = dlg.unplugAction();
-	HRESULT hr = actionStore( action );
-	if( SUCCEEDED( hr ) )
-	{
-		this->action = action;
-		return 0;
-	}
-	std::wstring message;
-	formatErrorMessage( message, "Unable to save the configuration", hr );
-	MessageBox( message.c_str(), messageTitle, MB_ICONWARNING | MB_OK );
+	action = dlg.unplugAction();
+	assert( !action.empty() );
 	return 0;
 }
 
@@ -155,7 +146,7 @@ LRESULT TrayAppWindow::onPowerBroadcast( UINT, WPARAM wParam, LPARAM, BOOL& hand
 
 	handled = TRUE;
 	BOOL hibernate;
-	switch( action )
+	switch( action.action() )
 	{
 	case eUnplugAction::Message:
 		MessageBox( L"Power unplug detected", messageTitle, MB_ICONINFORMATION | MB_OK );
@@ -171,7 +162,7 @@ LRESULT TrayAppWindow::onPowerBroadcast( UINT, WPARAM wParam, LPARAM, BOOL& hand
 		return FALSE;
 	}
 
-	constexpr BOOL bWakeupEventsDisabled = TRUE;
+	const BOOL bWakeupEventsDisabled = action.wakeupEventsDisabled();
 	const BOOL res = SetSuspendState( hibernate, TRUE, bWakeupEventsDisabled );
 	if( res == TRUE )
 		return TRUE;

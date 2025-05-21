@@ -1,6 +1,5 @@
 #include <stdafx.h>
 #include "TrayAppWindow.h"
-#include "Registry.h"
 #include "ConfigDialog.h"
 
 CComModule _AtlModule;
@@ -40,13 +39,13 @@ public:
 	}
 };
 
-static eUnplugAction __declspec( noinline ) showInitialDialog()
+static UnplugAction __declspec( noinline ) showInitialDialog()
 {
 	const HICON icon = LoadIcon( _AtlBaseModule.GetModuleInstance(), MAKEINTRESOURCE( IDI_SLEEPONUNPLUG ) );
-	ConfigDialog dlg{ eUnplugAction::Unspecified, icon, nullptr };
+	ConfigDialog dlg{ UnplugAction{}, icon, nullptr };
 	const INT_PTR res = dlg.DoModal( nullptr );
 	if( res != IDOK )
-		return eUnplugAction::Unspecified;
+		return {};
 
 	return dlg.unplugAction();
 }
@@ -57,11 +56,11 @@ int __stdcall wWinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 	if( !sic.initialize() )
 		return -1;
 
-	eUnplugAction act = actionLoad();
-	if( act == eUnplugAction::Unspecified )
+	UnplugAction act = UnplugAction::load();
+	if( act.empty() )
 	{
 		act = showInitialDialog();
-		if( act == eUnplugAction::Unspecified )
+		if( act.empty() )
 			return -2;
 	}
 
