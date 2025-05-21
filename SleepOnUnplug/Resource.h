@@ -9,13 +9,11 @@
 #define IDM_ABOUT                       104
 #define IDM_EXIT                        105
 #define IDI_SLEEPONUNPLUG               107
-#define IDI_SMALL                       108
 #define IDC_SLEEPONUNPLUG               109
 #define IDR_MAINFRAME                   128
 #define IDD_CONFIG                      129
 #define IDC_COMBO1                      1000
 #define IDC_ACTION                      1000
-#define IDC_CHECK1                      1001
 #define IDC_WAKE_EVENTS                 1001
 #define IDC_STATIC                      -1
 
