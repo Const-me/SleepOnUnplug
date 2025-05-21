@@ -4,12 +4,9 @@
 //
 #define IDC_MYICON                      2
 #define IDD_SLEEPONUNPLUG_DIALOG        102
-#define IDS_APP_TITLE                   103
 #define IDD_ABOUTBOX                    103
 #define IDM_ABOUT                       104
-#define IDM_EXIT                        105
 #define IDI_SLEEPONUNPLUG               107
-#define IDC_SLEEPONUNPLUG               109
 #define IDR_MAINFRAME                   128
 #define IDD_CONFIG                      129
 #define IDC_COMBO1                      1000
