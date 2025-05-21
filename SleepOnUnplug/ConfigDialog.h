@@ -5,6 +5,7 @@
 class ConfigDialog: public CDialogImpl<ConfigDialog>
 {
 	UnplugAction action;
+	HWND toolTip = nullptr;
 	const HICON icon;
 	HWND* const windowHandle;
 public:
@@ -21,7 +22,7 @@ public:
 	END_MSG_MAP()
 
 private:
-	LRESULT OnInitDialog( UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/ );
-	LRESULT OnBnClickedCancel( WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/ );
-	LRESULT OnBnClickedOk( WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/ );
+	LRESULT OnInitDialog( UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/ ) noexcept;
+	LRESULT OnBnClickedCancel( WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/ ) noexcept;
+	LRESULT OnBnClickedOk( WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/ ) noexcept;
 };

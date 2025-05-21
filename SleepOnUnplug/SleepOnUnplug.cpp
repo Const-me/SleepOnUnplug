@@ -1,6 +1,7 @@
 #include <stdafx.h>
 #include "TrayAppWindow.h"
 #include "ConfigDialog.h"
+#pragma comment(lib, "Comctl32.lib")
 
 CComModule _AtlModule;
 
@@ -55,6 +56,12 @@ int __stdcall wWinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 	SingleInstanceCheck sic;
 	if( !sic.initialize() )
 		return -1;
+
+	INITCOMMONCONTROLSEX icc;
+	icc.dwSize = sizeof( icc );
+	icc.dwICC = ICC_WIN95_CLASSES;  // Includes tooltip class
+	BOOL success = InitCommonControlsEx( &icc );
+	assert( success );
 
 	UnplugAction act = UnplugAction::load();
 	if( act.empty() )
