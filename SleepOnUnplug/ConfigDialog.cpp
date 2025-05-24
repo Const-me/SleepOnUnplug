@@ -1,17 +1,29 @@
 #include "stdafx.h"
 #include "ConfigDialog.h"
+#include "SleepOnUnplug.h"
+// The following stuff is required for the tooltips to work
+// Comctl32.dll is specified in the "Delay Loaded DLLs" linker setting: the DLL is not loaded unless the dialog is actually shown
+#pragma comment(lib, "Comctl32.lib")
 #pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
 ConfigDialog::ConfigDialog( UnplugAction act, HICON hIcon, HWND* pWindowHandle ) :
 	action( act ), icon( hIcon ), windowHandle( pWindowHandle )
 {
+	// The following function call is required for the tooltips to work
+	INITCOMMONCONTROLSEX icc;
+	icc.dwSize = sizeof( icc );
+	icc.dwICC = ICC_WIN95_CLASSES;  // Includes tooltip class
+	BOOL success = InitCommonControlsEx( &icc );
+	assert( success );
 }
 
 LRESULT ConfigDialog::OnInitDialog( UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/ ) noexcept
 {
+	// Setup the window
 	SendMessage( m_hWnd, WM_SETICON, ICON_SMALL, (LPARAM)icon );
 	CenterWindow();
 
+	// Setup controls, and their initial state
 	CWindow combo = GetDlgItem( IDC_ACTION );
 	combo.SendMessageW( CB_ADDSTRING, 0, (LPARAM)L"Show message" );
 	combo.SendMessageW( CB_ADDSTRING, 0, (LPARAM)L"Sleep" );
@@ -35,12 +47,14 @@ LRESULT ConfigDialog::OnInitDialog( UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*l
 	CWindow cbWakeEvents = GetDlgItem( IDC_WAKE_EVENTS );
 	cbWakeEvents.SendMessageW( BM_SETCHECK, action.wakeupEventsDisabled() ? BST_UNCHECKED : BST_CHECKED );
 
+	// If asked to, store dialog's HWND in the external pointer
 	if( nullptr != windowHandle )
 		*windowHandle = m_hWnd;
 
-	toolTip = CreateWindowEx( WS_EX_TOPMOST, TOOLTIPS_CLASS, nullptr,
+	// Setup tooltips
+	const HWND toolTip = CreateWindowEx( WS_EX_TOPMOST, TOOLTIPS_CLASS, nullptr,
 		WS_POPUP | TTS_NOPREFIX | TTS_ALWAYSTIP,
-		0, 0, 0, 0, m_hWnd, nullptr, _AtlBaseModule.GetModuleInstance(), nullptr );
+		0, 0, 0, 0, m_hWnd, nullptr, g_hInstance, nullptr );
 
 	if( nullptr != toolTip )
 	{
@@ -79,10 +93,10 @@ LRESULT ConfigDialog::OnBnClickedCancel( WORD /*wNotifyCode*/, WORD /*wID*/, HWN
 static inline bool isHibernationEnabled()
 {
 	DWORD dwResult = 0, dwSize = 4;
-	LONG ret = RegGetValue( HKEY_LOCAL_MACHINE,
+	RegGetValue( HKEY_LOCAL_MACHINE,
 		LR"(SYSTEM\CurrentControlSet\Control\Power)", L"HibernateEnabled",
-		RRF_RT_REG_DWORD, nullptr, &dwResult, &dwSize );
-	return ( ret == ERROR_SUCCESS && dwResult != 0 );
+		RRF_RT_REG_DWORD | RRF_ZEROONFAILURE, nullptr, &dwResult, &dwSize );
+	return dwResult != 0;
 }
 
 LRESULT ConfigDialog::OnBnClickedOk( WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/ ) noexcept

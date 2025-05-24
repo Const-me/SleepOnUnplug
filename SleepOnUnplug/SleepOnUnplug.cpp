@@ -1,9 +1,9 @@
 #include <stdafx.h>
+#include "SleepOnUnplug.h"
 #include "TrayAppWindow.h"
 #include "ConfigDialog.h"
-#pragma comment(lib, "Comctl32.lib")
 
-CComModule _AtlModule;
+HINSTANCE g_hInstance = nullptr;
 
 // Utility class to ensure this application only runs in a single instance
 class SingleInstanceCheck
@@ -42,7 +42,7 @@ public:
 
 static UnplugAction __declspec( noinline ) showInitialDialog()
 {
-	const HICON icon = LoadIcon( _AtlBaseModule.GetModuleInstance(), MAKEINTRESOURCE( IDI_SLEEPONUNPLUG ) );
+	const HICON icon = LoadIcon( g_hInstance, MAKEINTRESOURCE( IDI_SLEEPONUNPLUG ) );
 	ConfigDialog dlg{ UnplugAction{}, icon, nullptr };
 	const INT_PTR res = dlg.DoModal( nullptr );
 	if( res != IDOK )
@@ -56,12 +56,7 @@ int __stdcall wWinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstan
 	SingleInstanceCheck sic;
 	if( !sic.initialize() )
 		return -1;
-
-	INITCOMMONCONTROLSEX icc;
-	icc.dwSize = sizeof( icc );
-	icc.dwICC = ICC_WIN95_CLASSES;  // Includes tooltip class
-	BOOL success = InitCommonControlsEx( &icc );
-	assert( success );
+	g_hInstance = hInstance;
 
 	UnplugAction act = UnplugAction::load();
 	if( act.empty() )

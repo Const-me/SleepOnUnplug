@@ -5,7 +5,6 @@
 class ConfigDialog: public CDialogImpl<ConfigDialog>
 {
 	UnplugAction action;
-	HWND toolTip = nullptr;
 	const HICON icon;
 	HWND* const windowHandle;
 public:

@@ -3,6 +3,7 @@
 #include "TrayAppWindow.h"
 #include "Resource.h"
 #include "ConfigDialog.h"
+#include "SleepOnUnplug.h"
 #pragma comment(lib, "PowrProf.lib")
 
 HRESULT PowerSettingsNotification::registerWindow( HWND wnd ) noexcept
@@ -61,7 +62,7 @@ LRESULT TrayAppWindow::onCreate( UINT, WPARAM, LPARAM, BOOL& )
 	nid.uID = 1;
 	nid.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP;
 	nid.uCallbackMessage = WM_TRAYICON;
-	const HICON icon = LoadIcon( _AtlBaseModule.GetModuleInstance(), MAKEINTRESOURCE( IDI_SLEEPONUNPLUG ) );
+	const HICON icon = LoadIcon( g_hInstance, MAKEINTRESOURCE( IDI_SLEEPONUNPLUG ) );
 	this->icon = icon;
 	nid.hIcon = icon;
 	wcscpy_s( nid.szTip, messageTitle );
@@ -82,7 +83,7 @@ LRESULT TrayAppWindow::onTrayIcon( UINT, WPARAM, LPARAM lParam, BOOL& )
 	{
 		POINT pt;
 		GetCursorPos( &pt );
-		HMENU hMenu = CreatePopupMenu();
+		const HMENU hMenu = CreatePopupMenu();
 		AppendMenu( hMenu, MF_STRING, ID_TRAY_CONFIG, L"Configuration" );
 		AppendMenu( hMenu, MF_STRING, ID_TRAY_EXIT, L"Exit" );
 		SetForegroundWindow( m_hWnd );

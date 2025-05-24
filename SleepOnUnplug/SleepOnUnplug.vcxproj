@@ -84,6 +84,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+      <DelayLoadDLLs>Comctl32.dll</DelayLoadDLLs>
     </Link>
     <Manifest>
       <AdditionalManifestFiles>app.manifest</AdditionalManifestFiles>
@@ -91,6 +92,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="ConfigDialog.h" />
+    <ClInclude Include="SleepOnUnplug.h" />
     <ClInclude Include="UnplugAction.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />

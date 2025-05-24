@@ -17,7 +17,7 @@ namespace
 UnplugAction::UnplugAction( DWORD loaded ) noexcept :
 	packed( (uint8_t)loaded )
 {
-	assert( 0 == loaded >> 8 );
+	assert( 0 == ( loaded >> 8 ) );
 }
 
 UnplugAction::UnplugAction( eUnplugAction act, bool enableWakeupEvents ) noexcept :
@@ -41,18 +41,8 @@ HRESULT UnplugAction::store() const noexcept
 
 UnplugAction UnplugAction::load() noexcept
 {
-	DWORD value = 0;
-	do
-	{
-		CRegKey key;
-		LSTATUS res = key.Open( HKEY_CURRENT_USER, kRegKeyPath, KEY_QUERY_VALUE );
-		if( res != ERROR_SUCCESS )
-			break;
-
-		res = key.QueryDWORDValue( kValueName, value );
-		if( res != ERROR_SUCCESS )
-			value = 0;
-	} while( false );
-
-	return UnplugAction{ value };
+	DWORD dwResult = 0, dwSize = 4;
+	RegGetValue( HKEY_CURRENT_USER, kRegKeyPath, kValueName,
+		RRF_RT_REG_DWORD | RRF_ZEROONFAILURE, nullptr, &dwResult, &dwSize );
+	return UnplugAction{ dwResult };
 }
